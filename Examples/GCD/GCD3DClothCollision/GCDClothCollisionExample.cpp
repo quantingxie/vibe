@@ -177,7 +177,7 @@ main()
 	scene->addSceneObject(deformableObj);
 
 	// c. Create second cpdParticleObject
-	auto& sphereCPDobject = cpd::createObjectFromSurfMesh(CPDScene, "D:/GCD_ExampleFiles/sphere");
+	auto& sphereCPDobject = cpd::createObjectFromSurfMesh(CPDScene, "F:/VIBE/Resources/GCD_ExampleFiles/sphere");
 	sphereCPDobject->setParticleProperty(property);
 
 	// c.1 Create and initialize plane imstk::CPDObject from cpdParticleObject

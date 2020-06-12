@@ -51,7 +51,8 @@ main()
 	bool convertMesh = false;
 	if (convertMesh)
 	{
-		auto TetMesh = std::dynamic_pointer_cast<TetrahedralMesh>(MeshIO::read("D:/Research/IMSTK_GCDDebug/install/data/asianDragon/asianDragon.veg"/*"D:/GCD_ExampleFiles/dragon77k/dragon-coarse.tet.veg"*/));
+		//auto TetMesh = std::dynamic_pointer_cast<TetrahedralMesh>(MeshIO::read("D:/Research/IMSTK_GCDDebug/install/data/asianDragon/asianDragon.veg"/*"D:/GCD_ExampleFiles/dragon77k/dragon-coarse.tet.veg"*/));
+		auto TetMesh = std::dynamic_pointer_cast<TetrahedralMesh>(MeshIO::read(iMSTK_DATA_ROOT"/asianDragon/asianDragon.veg"/*"D:/GCD_ExampleFiles/dragon77k/dragon-coarse.tet.veg"*/));
 
 		auto& vertexPositions = TetMesh->getVertexPositions();
 		auto& tetrahedraVertices = TetMesh->getTetrahedraVertices();
@@ -97,7 +98,9 @@ main()
 	createTimeIntegrator(CPDScene, timestep, type);
 
 	// Create liver cpdParticleObject from meshIO
-	std::string path2files("D:/GCD_ExampleFiles/dragon");
+	//std::string path2files("D:/GCD_ExampleFiles/dragon");
+	//std::string path2files(iMSTK_DATA_ROOT"/GCD_ExampleFiles/dragon");
+	std::string path2files("F:/VIBE/Resources/GCD_ExampleFiles/dragon");
 	//std::string path2files("D:/GCD_ExampleFiles/dragon_coarse");
 	auto& dragonCPDobject = cpd::createObjectFromMeshIO(CPDScene, path2files);
 	std::vector<unsigned> fixed;

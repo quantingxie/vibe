@@ -123,6 +123,6 @@ main()
     cam->setPosition(Vec3d(0, 0, 15));
 
     simManager->setActiveScene(scene);
-    simManager->startSimulation(SimulationStatus::RUNNING);
+    simManager->start(SimulationStatus::running);
     return 0;
 }

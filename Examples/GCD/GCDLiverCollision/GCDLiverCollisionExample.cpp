@@ -67,7 +67,7 @@ main()
 	createTimeIntegrator(CPDScene, timestep, type);
 
 	// Create liver cpdParticleObject from meshIO
-	auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, "D:/GCD_ExampleFiles/liver");
+	auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, "F:/VIBE/Resources/GCD_ExampleFiles/liver");
 
 	// Create and initialize liver imstk::CPDObject from cpdParticleObject
 	auto liver_CSV = std::make_shared<CPDObject>("liver");
@@ -81,7 +81,7 @@ main()
 	TetTriMap->setMaster(liver_tetraMesh);
 	TetTriMap->setSlave(liver_surfMesh);
 	//TetTriMap->compute();
-	TetTriMap->load("D:/GCD_ExampleFiles/liver.wet");
+	TetTriMap->load("F:/VIBE/Resources/GCD_ExampleFiles/liver.wet");
 
 	// Set up material and visual model
 	auto material = std::make_shared<RenderMaterial>();
