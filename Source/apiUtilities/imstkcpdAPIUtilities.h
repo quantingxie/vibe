@@ -36,5 +36,10 @@ namespace cpd
   void writeTetra(TetrahedronMeshPtr p_mesh);
   void writeSurf(SurfaceMeshPtr p_mesh);
 
+  //---added by Jose James---------
+  ParticleObjectPtr create2DPlane(const ScenePtr p_scene, const std::string& p_resourceDir);
+
+  //ParticleObjectPtr create3DSlab(const ScenePtr p_scene, const std::string& p_resourceDir);
+
 }
 #endif // !CPDAPIUTILITIES_H

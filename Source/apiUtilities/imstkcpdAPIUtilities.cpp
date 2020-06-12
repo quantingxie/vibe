@@ -641,4 +641,142 @@ namespace cpd
     SURFMeshIO::write(p_mesh, "");
   }
 
+  // added by Jose James
+  ParticleObjectPtr create2DPlane(ScenePtr p_scene, const std::string& p_resourceDir)
+  {
+	  //std::cout << " Inside create2DPlane \n";
+	  const double lengthX = 20.0; // read
+	  const double lengthY = 10.0; // read
+	  const int factor = 10;
+	  const int nRowX = 2 * factor + 1; // read
+	  const int nRowY = factor + 1; // read
+	  const double rho = 800.0; // read
+	  const double thickness = 1.0; // read
+	  std::vector<unsigned> fixed;
+
+	  // Fixed all the points
+	  /*for (int i = 0; i < nRowY*nRowX; ++i) // read
+	  {
+		 fixed.push_back(i);
+	  }*/
+
+	  // Fixed half the points
+	  /*for (int i = 0; i < nRowY; ++i)
+		  for (int j = 0; j < nRowX; ++i)
+		  {
+			  fixed.push_back(i *nRowX + j);
+		  }*/
+
+		  // Fixed the left side points
+	  for (int i = 0; i < nRowY; ++i) // read
+	  {
+		  fixed.push_back(i *nRowX);
+	  }
+
+	  // Fixed the right side points
+	  for (int i = 1; i <= nRowY; ++i) // read
+	  {
+		  fixed.push_back(i*nRowX - 1);
+	  }
+
+	  /*
+	  // Fixed the top side points
+	  for (int i = 0; i < nRowX; ++i) // read
+	  {
+		  fixed.push_back(i);
+	  }*/
+
+	  /*
+	  // Fixed the bottom side points
+	  for (int i = 0; i < nRowX; ++i) // read
+	  {
+		  fixed.push_back(i);
+	  }*/
+
+
+	  const double youngs = 5E6; // read
+	  const double mu = 0.3; // read
+	  ConstraintBase::ConstraintType constraintType = ConstraintBase::ConstraintType(ConstraintBase::Type::CST2D,
+		  ConstraintBase::SubType::XCPD); // read
+
+	  const double area = lengthY * lengthX;
+	  const double element_area = 0.5*area / ((nRowX - 1)*(nRowY - 1));
+	  const double nodeMass = element_area * rho*thickness / 3.0;
+	  //const double nodeMass = 1000.0;
+	  std::cout << "nodeMass: " << nodeMass << "\n";
+	  const double dx = lengthX / (double)(nRowX - 1);
+	  const double dy = lengthY / (double)(nRowY - 1);
+
+	  StdVectorOfVec3d vertList;
+	  vertList.resize(nRowX*nRowY);
+	  for (int i = 0; i < nRowY; ++i)
+		  for (int j = 0; j < nRowX; j++)
+		  {
+			  vertList[i*nRowX + j] = Vec3d((double)dx*j, (double)dy*i, 1.0); // vertical plane
+			  //vertList[i*nRowX + j] = Vec3d((double)dx*j, 1.0, (double)dy*i*(-1)); // horizontal plane
+		  }
+
+	  std::vector<double> massList;
+	  massList.resize(nRowX*nRowY);
+	  for (unsigned i = 0; i < massList.size(); i++)
+	  {
+		  massList[i] = 0.0;
+		  //std::cout << "massList: " << i << "\n";
+	  }
+
+	  using TriangleArray = std::array<size_t, 3>;
+	  std::vector<TriangleArray> triangles;
+
+	  for (std::size_t i = 0; i < nRowY - 1; ++i)
+	  {
+		  for (std::size_t j = 0; j < nRowX - 1; j++)
+		  {
+			  TriangleArray tri[2];
+			  tri[0] = { { i *nRowX + j , i*nRowX + j + 1, (i + 1)*nRowX + j + 1 } };
+			  tri[1] = { { (i + 1)*nRowX + j + 1, (i + 1)*nRowX + j, i*nRowX + j } };
+
+			  //tri[0] = { { i *nRowX + j , i*nRowX + j + 1, (i + 1)*nRowX + j, } };
+			  //tri[1] = { { (i + 1)*nRowX + j,   i*nRowX + j + 1 ,(i + 1)*nRowX + j + 1} };
+
+			  //tri[0] = { { i *nRowX + j , i*nRowX + j + 1, (i + 1)*nRowX + j + 1 } };
+			  //tri[1] = { { (i + 1)*nRowX + j + 1, (i + 1)*nRowX + j, i*nRowX + j } };
+
+			  //tri[0] = { { i *nRowX + j , i*nRowX + j + 1, (i + 1)*nRowX + j } };
+			  //tri[1] = { { i *nRowX + j+1,  (i + 1)*nRowX + j + 1, (i + 1)*nRowX + j } };
+
+			  //tri[0] = { { i *nRowX + j , (i + 1)*nRowX + j + 1, i*nRowX + j + 1} };
+			  //tri[1] = { { (i + 1)*nRowX + j + 1, i*nRowX + j, (i + 1)*nRowX + j } };
+
+			  //tri[0] = { vertList[i*nRowX + j] , vertList[i*nRowX + j+1] , vertList[(i+1)*nRowX + j+1] };
+
+			  triangles.push_back(tri[0]);
+			  triangles.push_back(tri[1]);
+
+			  for (unsigned m = 0; m < 3; m++)
+			  {
+				  massList[tri[0][m]] += nodeMass;
+				  massList[tri[1][m]] += nodeMass;
+			  }
+		  }
+	  }
+
+	  SurfaceMeshPtr surfaceMesh = std::make_shared<SurfaceMesh>(vertList, triangles);
+
+	  ParticleObjectPtr particleObject = std::make_shared<ParticleObject>(surfaceMesh);
+
+	  particleObject->setProperties(youngs, mu);
+	  particleObject->addConstraintType(constraintType);
+
+	  ParticlePropertyPtr property = std::make_shared<ParticleProperty>();
+	  particleObject->setParticleProperty(property);
+
+	  particleObject->setMassList(massList);
+
+	  particleObject->setFixedPoints(fixed);
+
+	  p_scene->addObject(particleObject);
+
+	  return particleObject;
+  }
+
 }
