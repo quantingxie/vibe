@@ -791,8 +791,8 @@ namespace cpd
 	  const double width = 2;
 	  const double height = 150;
 
-	  //const int factor = 2;
-	  const int factor = 5;
+	  const int factor = 2;
+	  //const int factor = 5;
 
 	  // horizontal slab
 	  //const int nRows1 = 5* factor;

@@ -321,7 +321,7 @@ void testLoadVIBECPD3DModels()
 {
 	//loadStomach3DModel();
 	//loadESGTool();
-	testESGToolParts();
+	//testESGToolParts();
 
 }
 
