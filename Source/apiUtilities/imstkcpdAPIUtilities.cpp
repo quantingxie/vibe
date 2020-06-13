@@ -779,4 +779,176 @@ namespace cpd
 	  return particleObject;
   }
 
+  ParticleObjectPtr create3DSlab(const ScenePtr p_scene, const std::string & p_resourceDir)
+  {
+	  std::cout << " Inside create3DSlab \n";
+	  /* this part should be from a file reader*/
+	  //const double length = 20;
+	  //const double width = 30;
+	  //const double height = 100.0;
+
+	  const double length = 150;
+	  const double width = 2;
+	  const double height = 150;
+
+	  //const int factor = 2;
+	  const int factor = 5;
+
+	  // horizontal slab
+	  //const int nRows1 = 5* factor;
+	  //const int nRows2 = 1 * factor;
+	  //const int nRows3 = 5 * factor;
+
+	  const int nRows1 = 10 * factor;
+	  const int nRows2 = 1 * factor;
+	  const int nRows3 = 10 * factor;
+
+	  // vertical slab
+	  //const int nRows1 = 1 * factor;
+	  //const int nRows2 = 2 * factor;
+	  //const int nRows3 = 5 * factor;
+
+	  std::cout << "Number of nodes: " << nRows1 * nRows2*nRows3 << "\n";
+
+	  //const double rho = 7800/*7800*/;
+	  //const double rho = 25.5;
+	  const double rho = 8000;
+
+	  std::vector<unsigned> fixed;
+	  //fixed the left side
+	  for (unsigned i = 0; i < nRows1*nRows2; i++)
+		  fixed.push_back(i);
+
+	  //fixed the right side
+	  for (unsigned i = 0; i < nRows1*nRows2; i++)
+		  fixed.push_back(i + (nRows1*nRows2*(nRows3 - 1)));
+	  //fixed.push_back(i+180);
+
+  //fixed the front side
+	  for (unsigned i = 0; i < nRows1*nRows2; i++)
+		  fixed.push_back(i*nRows1);
+
+	  //fixed the back side
+	  for (unsigned i = 0; i < nRows1*nRows2; i++)
+		  fixed.push_back(i*nRows1 + (nRows1 - 1));
+
+	  //fixed the middle side
+	  //for (unsigned i = 0; i < nRows1*nRows2; i++)
+		  //fixed.push_back(i+400);
+
+	  //const double youngs = 8.0E8; // read
+	  //const double mu = 0.4; // read
+	  //const double youngs = 0.8E5; // read
+	  const double youngs = 8.0E8; // read
+	  const double mu = 0.4; // read
+	  ConstraintBase::ConstraintType constraintType = ConstraintBase::ConstraintType(ConstraintBase::Type::CST3D,
+		  ConstraintBase::SubType::XCPD); // read
+	  //ConstraintBase::ConstraintType constraintType = ConstraintBase::ConstraintType(ConstraintBase::Type::Distance,
+		  //ConstraintBase::SubType::XCPD); // read
+
+		/* this part should be from a file reader*/
+
+	  const double volume = length * width * height;
+	  const double element_volume = volume / (6 * (nRows1 - 1)*(nRows2 - 1)*(nRows3 - 1));
+	  const double nodeMass = element_volume * rho / 4.0;
+	  //const double nodeMass = 10000000;
+	  std::cout << "nodeMass: " << nodeMass << "\n";
+
+	  const double dx = length / (double)(nRows1 - 1);
+	  const double dy = width / (double)(nRows2 - 1);
+	  const double dz = height / (double)(nRows3 - 1);
+
+	  StdVectorOfVec3d vertList;
+	  vertList.resize(nRows1*nRows2*nRows3);
+	  for (int i = 0; i < nRows1; i++)
+		  for (int j = 0; j < nRows2; j++)
+			  for (int k = 0; k < nRows3; k++)
+				  vertList[k*nRows1 *nRows2 + j * nRows1 + i] = Vec3d((double)dx*i, (double)dy*j, (double)dz*k);
+
+	  std::vector<double> massList;
+	  massList.resize(vertList.size());
+	  for (unsigned i = 0; i < massList.size(); i++)
+		  massList[i] = 0.0;
+
+	  using TetraArray = std::array<size_t, 4>;
+	  std::vector<TetraArray> tetras;
+	  for (std::size_t i = 0; i < nRows1 - 1; i++)
+	  {
+		  for (std::size_t j = 0; j < nRows2 - 1; j++)
+		  {
+			  for (std::size_t k = 0; k < nRows3 - 1; k++)
+			  {
+				  unsigned idx[8] =
+				  { k*nRows1 *nRows2 + j * nRows1 + i, k*nRows1 *nRows2 + j * nRows1 + i + 1,
+					k*nRows1 *nRows2 + (j + 1)*nRows1 + i, k*nRows1 *nRows2 + (j + 1)*nRows1 + i + 1,
+					(k + 1)*nRows1 *nRows2 + j * nRows1 + i, (k + 1)*nRows1 *nRows2 + j * nRows1 + i + 1,
+					(k + 1)*nRows1 *nRows2 + (j + 1)*nRows1 + i, (k + 1)*nRows1 *nRows2 + (j + 1)*nRows1 + i + 1
+				  };
+
+				  TetraArray tri[6];
+				  tri[0] = { idx[0],idx[1],idx[2],idx[6] };
+				  tri[1] = { idx[0],idx[4],idx[1],idx[6] };
+				  tri[2] = { idx[4],idx[5],idx[1],idx[6] };
+				  tri[3] = { idx[2],idx[1],idx[3],idx[6] };
+				  tri[4] = { idx[1],idx[5],idx[7],idx[6] };
+				  tri[5] = { idx[1],idx[7],idx[3],idx[6] };
+
+				  for (std::size_t t = 0; t < 6; t++)
+					  tetras.push_back(tri[t]);
+
+				  for (unsigned m = 0; m < 4; m++)
+					  for (unsigned n = 0; n < 6; n++)
+					  {
+						  massList[tri[n][m]] += nodeMass;
+						  //massList[tri[3][5]] += nodeMass;
+					  }
+
+
+			  }
+		  }
+	  }
+
+
+	  TetrahedronMeshPtr tetraMesh = std::make_shared<TetrahedronMesh>(vertList, tetras);
+
+	  ParticleObjectPtr particleObject = std::make_shared<ParticleObject>(tetraMesh);
+
+	  particleObject->setProperties(youngs, mu);
+
+	  particleObject->addConstraintType(constraintType);
+
+	  ParticlePropertyPtr property = std::make_shared<ParticleProperty>();
+	  particleObject->setParticleProperty(property);
+
+	  particleObject->setMassList(massList);
+
+	  particleObject->setFixedPoints(fixed);
+
+	  //----------------
+	  //particleObject->getPosition(10);
+	  //Vec3d tempPos = Vec3d(0, -10, 0);
+	  //particleObject->setTemporaryPosition(100, tempPos);
+	  //particleObject->updateTempPositions();
+	  //std::vector<std::array<double, 3>> force1;
+	  //force1[0][0] = 0;
+	  //force1[0][1] = -10;
+	  //force1[0][2] = 0;
+	  Vec3d force1 = Vec3d(0, -100, 0);
+	  //particleObject->addToConstraintForce(vertList[0], force1);
+	  //particleObject->addToConstraintForce(1,force1);
+	  //particleObject->addExternalForce(force1);
+	  //particleObject->addDistributedForce(force1);
+
+	  //StdVectorOfVec3d& nodePos = particleObject->getPosition(10);
+	//particleObject->updateTempPositions();
+	//std::cout << "nodePos : " << nodePos << "/n"; 
+	//printVector(nodePos);
+
+	//particleObject->writePositions(cpd::ParticleObject::Mode::POS);
+
+
+	  p_scene->addObject(particleObject);
+
+	  return particleObject;
+  }
 }
