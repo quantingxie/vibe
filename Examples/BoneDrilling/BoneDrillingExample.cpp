@@ -46,7 +46,8 @@
 #include "imstkBoneDrillingCH.h"
 
 // global variables
-const std::string phantomOmni1Name = "Phantom1";
+//const std::string phantomOmni1Name = "Phantom1";
+const std::string phantomOmni1Name = "PHANToM 1";
 
 using namespace imstk;
 

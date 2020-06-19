@@ -72,7 +72,7 @@ main()
     auto cam = scene->getCamera();
     cam->setPosition(Vec3d(0, 0, 10));
 
-#ifdef iMSTK_USE_OPENHAPTICS
+    #ifdef iMSTK_USE_OPENHAPTICS
 
     auto camControllerInput = std::make_shared<CameraController>(*cam, client);
 
@@ -82,7 +82,7 @@ main()
     //LOG(INFO) << camController->getTranslationOffset(); // should be the same than initial cam position
     camController->setInversionFlags(CameraController::InvertFlag::rotY |
         CameraController::InvertFlag::rotZ);
-#endif
+   #endif
 
     // Light
     auto light = std::make_shared<DirectionalLight>("light");
