@@ -35,6 +35,7 @@
 #include "imstkHDAPIDeviceServer.h"
 #include "imstkCameraController.h"
 #include "imstkSceneObjectController.h"
+#include "imstkLaparoscopicToolController.h"
 
 const std::string phantomOmni1Name = "Phantom1";
 
@@ -879,11 +880,11 @@ void loadVibe3DModels()
 	//Create mesh and scale it down:
 	//auto stomachObject = MeshIO::read(iMSTK_DATA_ROOT "/stomach/Stomach_wip_01.OBJ");
 	//auto esgToolObject = MeshIO::read("F:/VIBE/Resources/vibe/3D/Medical_Instrument_wip01.OBJ"); // initial version of tool 3d model with cinch catheter
-	auto esgToolObject = MeshIO::read("F:/VIBE/Resources/vibe/3D_New/tool_3/Trials/os1.stl");
+	auto esgToolObject = MeshIO::read("F:/VIBE/Resources/vibe/3D_New/tool_3/Trials/os3.stl");
 
 	esgToolObject->scale(0.2, Geometry::TransformType::ConcatenateToTransform);
-	esgToolObject->rotate(Vec3d(1.0, 0.0, 0.0), PI/2, Geometry::TransformType::ConcatenateToTransform);
-	esgToolObject->rotate(Vec3d(0.0, 1.0, 0.0), -PI/2, Geometry::TransformType::ConcatenateToTransform);
+	//esgToolObject->rotate(Vec3d(1.0, 0.0, 0.0), PI/2, Geometry::TransformType::ConcatenateToTransform);
+	//esgToolObject->rotate(Vec3d(0.0, 1.0, 0.0), -PI/2, Geometry::TransformType::ConcatenateToTransform);
 	//esgToolObject->setTranslation(-6, 0, 3); // initToolPos initial position of esg tool.
 	esgToolObject->setTranslation(initToolPos); // initToolPos initial position of esg tool.
 	getToolPos = esgToolObject->getTranslation();
@@ -955,9 +956,9 @@ void loadVibe3DModels()
 	//cam->setFocalPoint(-6, 0, -3); // init position for the entrance in stomach
 	//cam->setPosition(Vec3d(-0.2, 0, 8.8)); // init position for the test case
 	//cam->setFocalPoint(-0.1, 0, -10); // init focus position for camera
-	//cam->setFieldOfView(92); 
-	cam->setPosition(initCamPos);
-	cam->setFocalPoint(initCamFoc);
+	cam->setFieldOfView(65); 
+	//cam->setPosition(initCamPos);
+	//cam->setFocalPoint(initCamFoc);
 	
 	auto spotLight1 = std::make_shared<imstk::SpotLight>("SpotLight1");
 	//spotLight1->setPosition(Vec3d(-0.2, -0.1, 8.9)); // test init position of spot light1
@@ -991,13 +992,19 @@ void loadVibe3DModels()
 	auto camControllerInput = std::make_shared<CameraController>(*cam, client);
 
 	// Set camera controller
-	//auto camController = cam->setController(camControllerInput);
+	auto camController = cam->setController(camControllerInput);
+	camController->setTranslationScaling(0.5);
+	Quatd camRot(90, 0, 1, 0);
+	//camController->setCameraRotationOffset(camRot);
+	//camController->setRotationOffset(camRot);
+	//camRotjawRotUpper = r * Rotd(m_jawAngle, m_jawRotationAxis);
+	//camController->getRotationOffset()
 	//camController->setTranslationOffset(Vec3d(-1, 0, 2));
 	//Quatd r = camController->getRotation();
 	//std::cout << " camController Rot : " << r << endl;
 	//Quatd r = 90;
 	//camController->setRotationOffset(Quatd );
-	//camController->setTranslationScaling(0.5);
+	
 	//LOG(INFO) << camController->getTranslationOffset(); // should be the same than initial cam position
 	//camController->setInversionFlags(CameraController::InvertFlag::rotY |
 		//CameraController::InvertFlag::rotZ);
@@ -1005,8 +1012,10 @@ void loadVibe3DModels()
 	//----------------------------
 
 	auto trackCtrl = std::make_shared<imstk::DeviceTracker>(client);
-	//trackCtrl->setRotationOffset();
-	//trackCtrl->setTranslationScaling(0.5);  
+	//Quatd r = trackCtrl->getRotation();
+	Quatd toolRot(90, 0, 0, 1);
+	//trackCtrl->setRotationOffset(toolRot);
+	trackCtrl->setTranslationScaling(0.5);  
 	//auto controller = std::make_shared<imstk::SceneObject>(esgToolObject, trackCtrl);
 	//auto controller = std::make_shared<imstk::PBDSceneObjectController>(object, trackCtrl);
 	//auto controller = std::make_shared<imstk::PBDSceneObjectController>(esgToolObject, trackCtrl);
@@ -1014,8 +1023,9 @@ void loadVibe3DModels()
 	//controller->setActived(true);
 	//controller->setToolIndex(0);
 	//scene->addObjectController(controller);
+	
 	auto objController = std::make_shared<SceneObjectController>(esgToolMeshObject, trackCtrl);
-	//scene->addObjectController(objController);
+	scene->addObjectController(objController);
 	
 	//----------------------------
 
