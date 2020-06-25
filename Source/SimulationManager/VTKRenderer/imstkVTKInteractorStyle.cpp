@@ -124,10 +124,60 @@ VTKInteractorStyle::OnTimer()
     }
 }
 
-void
-VTKInteractorStyle::OnChar()
+void VTKInteractorStyle::OnKeyPress() // added by Jose for Vibe
+{
+	//std::cout << m_simManager->getActiveScene()->getName() << endl;
+	if (m_simManager->getActiveScene()->getName() == "VIBE")
+	{
+		//vtkRenderWindowInteractor *testKeyPress = this->Interactor;
+		//std::string keyP = testKeyPress->GetKeySym();
+		std::string keyP = this->Interactor->GetKeySym();
+
+		// Output the key that was pressed
+		//std::cout << "Pressed keyP : " << keyP << std::endl;
+
+		//===========arrow key navigation for VIBE============
+		if (keyP == "Up")
+		{
+			//std::cout << "Inside test Up arrow key press" << endl;
+			//m_simManager->getActiveScene()->;
+			//	initToolPos
+			//Vec3d tPos = m_simManager->getActiveScene()->getSceneObject("esgToolMesh")->getVisualModel()->getGeometry()->getTranslation();
+			//Vec3d navPos;
+			//double countFB = 0;
+			//countFB = countFB + 0.1;
+			//std::cout << "countFB: " << countFB << endl;
+			//m_simManager->keyPress_UpArrow();
+			//this->keyPress_UpArrow()
+			//auto scene = m_simManager->getActiveScene();
+			//scene->keyPress_UpArrow();
+		}
+		else if (keyP == "Down")
+		{
+			//std::cout << "Inside test Down arrow key press" << endl;
+			//m_simManager->reset();
+		}
+		else if (keyP == "Left")
+		{
+			//std::cout << "Inside test Left arrow key press" << endl;
+			//m_simManager->reset();
+		}
+		else if (keyP == "Right")
+		{
+			//std::cout << "Inside test Right arrow key press" << endl;
+			//m_simManager->reset();
+		}
+	}
+	
+}
+
+void VTKInteractorStyle::OnChar()
 {
     char key = this->Interactor->GetKeyCode();
+	//vtkRenderWindowInteractor *rwi = this->Interactor;
+	std::string keyS = this->Interactor->GetKeySym();
+	//std::cout << key;
+	//std::cout << keyS;
 
     // Call custom function if exists, and return
     // if it returned `override=true`
@@ -190,6 +240,7 @@ VTKInteractorStyle::OnChar()
     {
         m_simManager->reset();
     }
+	
 }
 
 void

@@ -538,6 +538,7 @@ SimulationManager::infiniteLoopNoRenderingMode()
 
         if (c == 'r' || c == 'R')
         {
+			//LOG(INFO) << "Inside key press R";
             this->reset();
             continue;
         }

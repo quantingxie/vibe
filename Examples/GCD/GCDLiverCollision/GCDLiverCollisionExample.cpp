@@ -55,6 +55,11 @@ Vec3d initSL1Foc;
 Vec3d initDL1Foc;
 Vec3d initPL1Pos;
 
+double countFB = 0;
+double countLR = 0;
+double countUD = 0;
+
+//auto esgToolObject;
 //auto sdk = std::make_shared<SimulationManager>();
 //auto scene = sdk->createNewScene("VIBE");
 
@@ -68,6 +73,13 @@ void testESGToolParts(); // created by Jose James
 void loadVibe3DModels(); // created by Jose James
 void loadStomachModel(); // created by Jose James
 void loadOverstitchModel(); // created by Jose James
+
+void tool_Fwd();
+void tool_Bwd();
+void tool_Up();
+void tool_Down();
+void tool_Left();
+void tool_Right();
 
 ///
 /// \brief This example demonstrates the 2D Beam simulation
@@ -861,10 +873,11 @@ void loadVibe3DModels()
 	scene->addSceneObject(stomachMeshObject);
 	
 	//------------set init positions of tool, camera and lights-----------
+	/*
 	//initToolPos = Vec3d(0.0, 0.0, 10.0); // test initial position of esg tool model in the center. 
-   // initToolPos = Vec3d(-6.0, 0.0, 3.0); // custom initial position of esg tool model in the entrance of stomach. 
+    //initToolPos = Vec3d(-6.0, 0.0, 3.0); // custom initial position of esg tool model in the entrance of stomach. 
 	initToolPos = Vec3d(-9.0, 0.0, 4.0); // custom initial position of esg tool model in the entrance of stomach. 
-
+	
 	initCamPos = initToolPos + Vec3d(-0.2, 0.0, -1.2);
 	initCamFoc = initToolPos + Vec3d(-0.1, 0.0, -20);
 	initSL1Pos = initToolPos + Vec3d(-0.2, -0.1, -1.1);
@@ -872,6 +885,19 @@ void loadVibe3DModels()
 	//initDL1Foc = initToolPos + Vec3d(0.0, 0.0, -1.1);
 	initDL1Foc = initToolPos + Vec3d(0.0, 0.0, -2.0);
 	initPL1Pos = initToolPos + Vec3d(-0.1, -0.1, -1.1);
+	*/
+
+	//===============
+	//initToolPos = Vec3d(0.0, 0.0, 4.0); // custom initial position of esg tool model in the entrance of stomach. 
+	initToolPos = Vec3d(-6.0, 0.0, 4.0); // custom initial position of esg tool model in the entrance of stomach. 
+	initCamPos = initToolPos + Vec3d(0.1, 0.0, 0.15);
+	initCamFoc = initToolPos + Vec3d(0.1, 0.0, -20);
+	initSL1Pos = initToolPos + Vec3d(-0.2, -0.1, -1.1);
+	initSL1Foc = initToolPos + Vec3d(-0.2, 0.0, -20);
+	//initDL1Foc = initToolPos + Vec3d(0.0, 0.0, -1.1);
+	initDL1Foc = initToolPos + Vec3d(0.0, 0.0, -2.0);
+	//initPL1Pos = initToolPos + Vec3d(-0.1, -0.1, -1.1);
+	initPL1Pos = initToolPos + Vec3d(-0.1, -0.1, -1.0);
 	//-----------------------------------------------------------
 
 	//-----------------------------------------------------------------------------
@@ -987,10 +1013,12 @@ void loadVibe3DModels()
 	pointLight1->setIntensity(1);
 	scene->addLight(pointLight1);
 
-   #ifdef iMSTK_USE_OPENHAPTICS
+	//----------for device tracker and cam cobtroller with 3DS Touch device.
+	
+	#ifdef iMSTK_USE_OPENHAPTICS
 	//cam->setViewUp(0, 1, 0);
+	
 	auto camControllerInput = std::make_shared<CameraController>(*cam, client);
-
 	// Set camera controller
 	auto camController = cam->setController(camControllerInput);
 	camController->setTranslationScaling(0.5);
@@ -1081,6 +1109,62 @@ void loadVibe3DModels()
 	//spotLight2->setCastsShadow(false);
 	//scene->addLight(spotLight3);
 
+	//===========keypress==============
+	// Create a call back on key press of 'b' to take the screen shot"
+	// Create a call back on key press of 's' to test Keypress event handler from main file.
+	auto viewer = sdk->getViewer();
+	if (viewer)
+	{
+		viewer->setOnCharFunction('1', [&](InteractorStyle* c) -> bool
+		{
+			//std::cout << "Inside keypress from main file. : " << endl;
+			tool_Fwd();
+			getToolPos = esgToolObject->getTranslation();
+			getToolPos = getToolPos + Vec3d(0.0, 0.0, countFB);
+	        //std::cout << " esgToolObject getToolPos : " << getToolPos << endl;
+	       esgToolObject->setTranslation(getToolPos); // initToolPos initial position of esg tool.
+			return true;
+		});
+		viewer->setOnCharFunction('2', [&](InteractorStyle* c) -> bool
+		{
+			//std::cout << "Inside keypress from main file. : " << endl;
+			tool_Bwd();
+			return true;
+		});
+		viewer->setOnCharFunction('3', [&](InteractorStyle* c) -> bool
+		{
+			//std::cout << "Inside keypress from main file. : " << endl;
+			tool_Up();
+			return true;
+		});
+		viewer->setOnCharFunction('4', [&](InteractorStyle* c) -> bool
+		{
+			//std::cout << "Inside keypress from main file. : " << endl;
+			tool_Down();
+			return true;
+		});
+		viewer->setOnCharFunction('5', [&](InteractorStyle* c) -> bool
+		{
+			//std::cout << "Inside keypress from main file. : " << endl;
+			tool_Left();
+			return true;
+		});
+		viewer->setOnCharFunction('6', [&](InteractorStyle* c) -> bool
+		{
+			//std::cout << "Inside keypress from main file. : " << endl;
+			tool_Right();
+			return true;
+		});
+	}
+	//sdk->getViewer->setOnCharFunction('b', [&](InteractorStyle\* c) -> bool
+	//{
+		//std::cout << "Inside keypress : " << endl;
+		//screenShotUtility->saveScreenShot();
+		//return false;
+	//});
+	//==============================
+	//keyPress_UpArrow();
+	//===============================
 	// Run
 	sdk->setActiveScene(scene);
 	//sdk->getViewer()->setBackgroundColors(Vec3d(0, 0, 0));
@@ -1206,3 +1290,42 @@ void loadOverstitchModel()
 	scene->addSceneObject(esgToolMeshObject);
 	*/
 }
+
+void tool_Up()
+{
+	countUD = countUD + 0.1;
+	std::cout << "countUD : " << countUD << endl;
+}
+void tool_Down()
+{
+	countUD = countUD - 0.1;
+	std::cout << "countUD : " << countUD << endl;
+}
+void tool_Left()
+{
+	countLR = countLR + 0.1;
+	std::cout << "countLR : " << countLR << endl;
+}
+void tool_Right()
+{
+	countLR = countLR - 0.1;
+	std::cout << "countLR : " << countLR << endl;
+}
+void tool_Fwd()
+{
+	countFB = countFB - 0.1;
+	std::cout << "countFB : " << countFB << endl;
+	//setNavPos();
+}
+void tool_Bwd()
+{
+	countFB = countFB + 0.1;
+	std::cout << "countFB : " << countFB << endl;
+}
+
+//void setNavPos()
+//{
+	//getToolPos = esgToolObject->getTranslation();
+	//std::cout << " esgToolObject getToolPos : " << getToolPos << endl;
+	//esgToolObject->setTranslation(initToolPos); // initToolPos initial position of esg tool.
+//}

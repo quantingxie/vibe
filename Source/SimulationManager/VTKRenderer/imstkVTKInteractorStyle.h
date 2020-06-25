@@ -63,7 +63,9 @@ public:
     ///
     virtual void OnChar() override;
 
-    ///
+	virtual void OnKeyPress() override;
+
+	///
     /// \brief Slot for moved mouse cursor
     ///
     virtual void OnMouseMove() override;
