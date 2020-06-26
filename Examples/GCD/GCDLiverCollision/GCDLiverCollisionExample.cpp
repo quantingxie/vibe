@@ -70,9 +70,10 @@ void testLoadVIBECPD3DModels(); // created by Jose James
 void loadStomach3DModel(); // created by Jose James
 void loadESGTool(); // created by Jose James
 void testESGToolParts(); // created by Jose James
-void loadVibe3DModels(); // created by Jose James
 void loadStomachModel(); // created by Jose James
 void loadOverstitchModel(); // created by Jose James
+void vibeSimDev();  // created by Jose James for VIBE sim development
+void testCPDVolumeStomach();  // created by Jose James
 
 void tool_Fwd();
 void tool_Bwd();
@@ -93,7 +94,10 @@ main()
 	//testLoadVIBECPD3DModels();  // created by Jose James
 	//-----------------------------------------------------------
 	
-	loadVibe3DModels(); // created by Jose James
+	//vibeSimDev(); // created by Jose James for VIBE sim development
+	
+	testCPDVolumeStomach(); //created by Jose James for stomach volumetric model laoding and deformation using GCD for VIBE
+	
     return 0;
 }
 
@@ -124,8 +128,9 @@ void testCPDVolume()
 	createTimeIntegrator(CPDScene, timestep, type);
 
 	// Create liver cpdParticleObject from meshIO
-	auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, "F:/VIBE/Resources/GCD_ExampleFiles/liver");
-
+	//auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, "F:/VIBE/Resources/GCD_ExampleFiles/liver"); // path for my local machine folder
+	auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, iMSTK_DATA_ROOT"/GCD_ExampleFiles/liver"); // general path
+	
 	// Create and initialize liver imstk::CPDObject from cpdParticleObject
 	auto liver_CSV = std::make_shared<CPDObject>("liver");
 	liver_CSV->setParticleObject(liverCPDobject);
@@ -138,7 +143,8 @@ void testCPDVolume()
 	TetTriMap->setMaster(liver_tetraMesh);
 	TetTriMap->setSlave(liver_surfMesh);
 	//TetTriMap->compute();
-	TetTriMap->load("F:/VIBE/Resources/GCD_ExampleFiles/liver.wet");
+	//TetTriMap->load("F:/VIBE/Resources/GCD_ExampleFiles/liver.wet"); // path for my local machine folder
+	TetTriMap->load(iMSTK_DATA_ROOT"/GCD_ExampleFiles/liver.wet"); // general path
 
 	// Set up material and visual model
 	auto material = std::make_shared<RenderMaterial>();
@@ -790,7 +796,7 @@ void testESGToolParts()
 	//return 0;
 }
 
-void loadVibe3DModels()
+void vibeSimDev()
 {
    #ifndef iMSTK_USE_OPENHAPTICS
 	std::cout << "Audio not enabled at build time" << std::endl;
@@ -825,8 +831,8 @@ void loadVibe3DModels()
 	//----------------------------------------------------------------------------
 	
 	//Create mesh and scale it down:
-	//auto stomachObject = MeshIO::read(iMSTK_DATA_ROOT "/stomach/Stomach_wip_01.OBJ");
-	auto stomachObject = MeshIO::read("F:/VIBE/Resources/vibe/3D/Stomach_wip_01.OBJ");
+	auto stomachObject = MeshIO::read(iMSTK_DATA_ROOT "/vibe/3D/Stomach_wip_01.OBJ"); // general path
+	//auto stomachObject = MeshIO::read("F:/VIBE/Resources/vibe/3D/Stomach_wip_01.OBJ"); // local path
 
 	stomachObject->scale(0.1, Geometry::TransformType::ConcatenateToTransform);	//The stomach mesh apparently is large and needs to be substantially scaled down
 	stomachObject->rotate(Vec3d(1.0, 0.0, 0.0), PI/4, Geometry::TransformType::ConcatenateToTransform);
@@ -841,18 +847,20 @@ void loadVibe3DModels()
 	stomachMeshRenderMaterial->setDisplayMode(RenderMaterial::DisplayMode::SURFACE);
 	stomachMeshRenderMaterial->setBackFaceCulling(false);
 
-	//Importing and applying textures:
-	//auto stomachBaseTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_BaseColor.png", Texture::Type::DIFFUSE);
-	//auto stomachNormalTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_Normal.png", Texture::Type::NORMAL);
-	//auto stomachRoughnessTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_Roughness.png", Texture::Type::ROUGHNESS);
-	//auto stomachMetalnessTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_Specular.png", Texture::Type::METALNESS);
-	//auto stomachOcclusionTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_Occlusion.png", Texture::Type::AMBIENT_OCCLUSION);
+	//Importing and applying textures: from general imstk path
+	auto stomachBaseTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/vibe/Stomach_Textures/Stomach_mat_BaseColor.png", Texture::Type::DIFFUSE);
+	auto stomachNormalTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/vibe/Stomach_Textures/Stomach_mat_Normal.png", Texture::Type::NORMAL);
+	auto stomachRoughnessTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/vibe/Stomach_Textures/Stomach_mat_Roughness.png", Texture::Type::ROUGHNESS);
+	auto stomachMetalnessTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/vibe/Stomach_Textures/Stomach_mat_Specular.png", Texture::Type::METALNESS);
+	auto stomachOcclusionTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/vibe/Stomach_Textures/Stomach_mat_Occlusion.png", Texture::Type::AMBIENT_OCCLUSION);
 
-	auto stomachBaseTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_BaseColor.png", Texture::Type::DIFFUSE);
-	auto stomachNormalTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_Normal.png", Texture::Type::NORMAL);
-	auto stomachRoughnessTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_Roughness.png", Texture::Type::ROUGHNESS);
-	auto stomachMetalnessTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_Specular.png", Texture::Type::METALNESS);
-	auto stomachOcclusionTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_Occlusion.png", Texture::Type::AMBIENT_OCCLUSION);
+	//Importing and applying textures: from local folder path
+	//auto stomachBaseTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_BaseColor.png", Texture::Type::DIFFUSE);
+	//auto stomachNormalTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_Normal.png", Texture::Type::NORMAL);
+	//auto stomachRoughnessTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_Roughness.png", Texture::Type::ROUGHNESS);
+	//auto stomachMetalnessTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_Specular.png", Texture::Type::METALNESS);
+	//auto stomachOcclusionTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Stomach_Textures/Stomach_mat_Occlusion.png", Texture::Type::AMBIENT_OCCLUSION);
+	
 	stomachMeshRenderMaterial->addTexture(stomachBaseTexture);
 	//stomachMeshRenderMaterial->setRoughness(0.132f);
 	stomachMeshRenderMaterial->setRoughness(0.080f);
@@ -904,9 +912,9 @@ void loadVibe3DModels()
 	//loadOverstitchModel();
 	//-----------------------------------------------------------------------------
 	//Create mesh and scale it down:
-	//auto stomachObject = MeshIO::read(iMSTK_DATA_ROOT "/stomach/Stomach_wip_01.OBJ");
 	//auto esgToolObject = MeshIO::read("F:/VIBE/Resources/vibe/3D/Medical_Instrument_wip01.OBJ"); // initial version of tool 3d model with cinch catheter
-	auto esgToolObject = MeshIO::read("F:/VIBE/Resources/vibe/3D_New/tool_3/Trials/os3.stl");
+	//auto esgToolObject = MeshIO::read("F:/VIBE/Resources/vibe/3D_New/tool_3/Trials/os3.stl"); // latest version of tool
+	auto esgToolObject = MeshIO::read(iMSTK_DATA_ROOT "/vibe/3D_New/tool_3/Trials/os3.stl");
 
 	esgToolObject->scale(0.2, Geometry::TransformType::ConcatenateToTransform);
 	//esgToolObject->rotate(Vec3d(1.0, 0.0, 0.0), PI/2, Geometry::TransformType::ConcatenateToTransform);
@@ -923,18 +931,20 @@ void loadVibe3DModels()
 	esgToolMeshRenderMaterial->setDisplayMode(RenderMaterial::DisplayMode::SURFACE);
 	esgToolMeshRenderMaterial->setBackFaceCulling(false);
 
-	//Importing and applying textures:
-	//auto stomachBaseTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_BaseColor.png", Texture::Type::DIFFUSE);
-	//auto stomachNormalTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_Normal.png", Texture::Type::NORMAL);
-	//auto stomachRoughnessTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_Roughness.png", Texture::Type::ROUGHNESS);
-	//auto stomachMetalnessTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_Specular.png", Texture::Type::METALNESS);
-	//auto stomachOcclusionTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT "/stomach/Stomach_Textures/Stomach_mat_Occlusion.png", Texture::Type::AMBIENT_OCCLUSION);
+	//Importing and applying textures of ESG tool: from general imstk path
+	auto esgToolBaseTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT"/vibe/Overstitch_Textures/Overstitch_low_base_mat_BaseColor.png", Texture::Type::DIFFUSE);
+	auto esgToolNormalTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT"/vibe/Overstitch_Textures/Overstitch_low_base_mat_Normal.png", Texture::Type::NORMAL);
+	auto esgToolRoughnessTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT"/vibe/Overstitch_Textures/Overstitch_low_base_mat_Roughness.png", Texture::Type::ROUGHNESS);
+	auto esgToolMetalnessTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT"/vibe/Overstitch_Textures/Overstitch_low_base_mat_Metallic.png", Texture::Type::METALNESS);
+	auto esgToolOcclusionTexture = std::make_shared<Texture>(iMSTK_DATA_ROOT"/vibe/Overstitch_Textures/Overstitch_low_base_mat_AO.png", Texture::Type::AMBIENT_OCCLUSION);
 
-	auto esgToolBaseTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_BaseColor.png", Texture::Type::DIFFUSE);
-	auto esgToolNormalTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_Normal.png", Texture::Type::NORMAL);
-	auto esgToolRoughnessTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_Roughness.png", Texture::Type::ROUGHNESS);
-	auto esgToolMetalnessTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_Metallic.png", Texture::Type::METALNESS);
-	auto esgToolOcclusionTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_AO.png", Texture::Type::AMBIENT_OCCLUSION);
+	//Importing and applying textures of ESG tool:: from local folder path
+	//auto esgToolBaseTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_BaseColor.png", Texture::Type::DIFFUSE);
+	//auto esgToolNormalTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_Normal.png", Texture::Type::NORMAL);
+	//auto esgToolRoughnessTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_Roughness.png", Texture::Type::ROUGHNESS);
+	//auto esgToolMetalnessTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_Metallic.png", Texture::Type::METALNESS);
+	//auto esgToolOcclusionTexture = std::make_shared<Texture>("F:/VIBE/Resources/vibe/Overstitch_Textures/Overstitch_low_base_mat_AO.png", Texture::Type::AMBIENT_OCCLUSION);
+	
 	//esgToolMeshRenderMaterial->addTexture(esgToolBaseTexture);
 	//esgToolMeshRenderMaterial->addTexture(esgToolNormalTexture);
 	//esgToolMeshRenderMaterial->addTexture(esgToolRoughnessTexture);
@@ -1110,8 +1120,7 @@ void loadVibe3DModels()
 	//scene->addLight(spotLight3);
 
 	//===========keypress==============
-	// Create a call back on key press of 'b' to take the screen shot"
-	// Create a call back on key press of 's' to test Keypress event handler from main file.
+	// Create a call back on key press to test Keypress event handler from main file.
 	auto viewer = sdk->getViewer();
 	if (viewer)
 	{
@@ -1329,3 +1338,114 @@ void tool_Bwd()
 	//std::cout << " esgToolObject getToolPos : " << getToolPos << endl;
 	//esgToolObject->setTranslation(initToolPos); // initToolPos initial position of esg tool.
 //}
+
+void testCPDVolumeStomach()
+{
+	auto simManager = std::make_shared<SimulationManager>();
+	auto scene = simManager->createNewScene("CPD Stomach Collision");
+
+	cpd::ScenePtr CPDScene = std::make_shared<cpd::Scene>();
+	scene->setCPDScene(CPDScene);
+
+	/* this part should be from a file reader*/
+	size_t nbrForces = 1;
+	std::vector<std::array<double, 3>> forces;
+	std::vector<bool> isDistributed;
+	forces.resize(nbrForces);
+	isDistributed.resize(nbrForces);
+	forces[0][0] = 0.0;
+	forces[0][1] = -9.8;
+	forces[0][2] = 0.0;
+	isDistributed[0] = true;
+	cpd::BaseTimeIntegrator::Type type = cpd::BaseTimeIntegrator::Type::SIE;
+	double timestep = 0.01;
+	/* this part should be from a file reader*/
+
+	// Create forces and time integrator
+	createForces(CPDScene, forces, isDistributed);
+	createTimeIntegrator(CPDScene, timestep, type);
+
+	// Create liver cpdParticleObject from meshIO
+	//auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, "F:/VIBE/Resources/GCD_ExampleFiles/liver");
+	//auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, "F:/VIBE/Resources/vibe/3D_New/Stomach/tetra/stomach1/stomach");
+	auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach1/stomach");
+
+	// Create and initialize liver imstk::CPDObject from cpdParticleObject
+	auto liver_CSV = std::make_shared<CPDObject>("stomach");
+	liver_CSV->setParticleObject(liverCPDobject);
+	auto liver_tetraMesh = std::make_shared<imstk::TetrahedralMesh>();
+	auto liver_surfMesh = std::make_shared<imstk::SurfaceMesh>();
+	liver_CSV->convertToMesh(liver_tetraMesh, liver_surfMesh);
+	//writeSurf(liverCPDobject->getSurfaceMesh());
+
+	// Set up mapping between tet and surface mesh, by loading precomputed map
+	auto TetTriMap = std::make_shared<imstk::TetraTriangleMap>();
+	TetTriMap->setMaster(liver_tetraMesh);
+	TetTriMap->setSlave(liver_surfMesh);
+	//TetTriMap->compute();
+	//TetTriMap->load("F:/VIBE/Resources/vibe/3D_New/Stomach/tetra/stomach1/stomach.wet");
+	TetTriMap->load(iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach1/stomach.wet");
+
+	// Set up material and visual model
+	auto material = std::make_shared<RenderMaterial>();
+	material->setDisplayMode(RenderMaterial::DisplayMode::SURFACE);
+	material->setColor(liverRed);
+	auto liverSurfMeshModel = std::make_shared<VisualModel>(liver_surfMesh);
+	liverSurfMeshModel->setRenderMaterial(material);
+
+	// Create CPD dynamical Model
+	auto liverCpdModel = std::make_shared<CPDModel>();
+
+	// Set Dynamical Model, Visual Model and Map
+	liver_CSV->setDynamicalModel(liverCpdModel);
+	liver_CSV->addVisualModel(liverSurfMeshModel);
+	liver_CSV->setPhysicsGeometry(liver_tetraMesh);
+	liver_CSV->setPhysicsToVisualMap(TetTriMap);
+
+
+	// Create plane cpdParticleObject
+	auto& planeCPDobject = cpd::createPlane1(50, CPDScene, "");
+
+	// Create and initialize plane imstk::CPDObject from cpdParticleObject
+	auto planeObj = std::make_shared<CPDObject>("Plane");
+	planeObj->setParticleObject(planeCPDobject);
+	auto planeMesh = std::make_shared<imstk::SurfaceMesh>();
+	planeObj->convertToMesh(planeMesh);
+
+	// Set up material and visual model
+	auto materialplane = std::make_shared<RenderMaterial>();
+	materialplane->setDisplayMode(RenderMaterial::DisplayMode::SURFACE);
+	materialplane->setColor(tiffanyBlue);
+	materialplane->backfaceCullingOff();
+	auto planesurfMeshModel = std::make_shared<VisualModel>(planeMesh);
+	planesurfMeshModel->setRenderMaterial(materialplane);
+
+	// Create CPD dynamical Model
+	auto cpdModelPlane = std::make_shared<CPDModel>();
+
+	// Set Dynamical Model, Visual Model and Map
+	planeObj->setDynamicalModel(cpdModelPlane);
+	planeObj->addVisualModel(planesurfMeshModel);
+	planeObj->setPhysicsGeometry(planeMesh);
+
+	// Add collision pair
+	CPDScene->addCollisionPair(liverCPDobject, planeCPDobject);
+
+	// Add sceneObjects
+	scene->addSceneObject(liver_CSV);
+	scene->addSceneObject(planeObj);
+
+	// Light
+	auto whiteLight = std::make_shared<imstk::PointLight>("whiteLight");
+	whiteLight->setPosition(0, 8, -15);
+	whiteLight->setFocalPoint(imstk::Vec3d(-1, -4, -1));
+	whiteLight->setIntensity(300);
+	scene->addLight(whiteLight);
+
+	// Camera
+	scene->getCamera()->setFocalPoint(-2, -2, -10);
+	scene->getCamera()->setPosition(2, 8, -32);
+
+	simManager->setActiveScene(scene);
+	simManager->start(SimulationStatus::paused);
+}

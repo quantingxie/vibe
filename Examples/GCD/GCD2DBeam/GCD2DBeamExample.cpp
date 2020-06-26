@@ -37,7 +37,7 @@ Color liverRed = Color(0.92, 0.21, 0.19);
 
 // declarations of the functions
 void testCPD2DBeam();
-void testCPD2DPlane(); // created by Jose James
+void testCPD2DPlane(); // created by Jose James for plane deformation using GCD
 
 ///
 /// \brief This example demonstrates the 2D Beam simulation
@@ -115,7 +115,8 @@ void testCPD2DBeam()
 	scene->getCamera()->setPosition(10, 0.5, 20);
 
 	simManager->setActiveScene(scene);
-	simManager->start(SimulationStatus::paused);
+	//simManager->start(SimulationStatus::paused);
+	simManager->start();
 
 }
 
@@ -127,7 +128,8 @@ void testCPD2DPlane()
 	cpd::ScenePtr CPDScene = std::make_shared<cpd::Scene>();
 	scene->setCPDScene(CPDScene);
 
-	std::string resourceDir = "F:\Research\Resources\APIUtilities";
+	std::string resourceDir;
+	//std::string resourceDir = "F:\Research\Resources\APIUtilities";
 	/* this part should be from a file reader*/
 	size_t nbrForces = 1;
 	std::vector<std::array<double, 3>> forces;

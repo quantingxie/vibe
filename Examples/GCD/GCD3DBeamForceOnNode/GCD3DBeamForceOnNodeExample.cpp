@@ -39,8 +39,8 @@ Color liverRed = Color(0.92, 0.21, 0.19);
 /// \brief This example demonstrates the 2D Beam simulation
 /// using Generalized Constrained Dynamics
 ///
-int testCPD3DBeamFonN();    // created by Jose James
-int testGCD3DSlabFonN();    // created by Jose James
+int testCPD3DBeamFonN();    
+int testGCD3DSlabFonN();    // created by Jose James for the deformation by external force on selected nodes using GCD.
 
 
 int
@@ -58,8 +58,7 @@ int testCPD3DBeamFonN()
 
 	cpd::ScenePtr CPDScene = std::make_shared<cpd::Scene>();
 	scene->setCPDScene(CPDScene);
-
-
+	
 	std::string resourceDir = "F:\Research\Resources\APIUtilities";
 	/* this part should be from a file reader*/
 	size_t nbrForces = 1;
@@ -175,7 +174,8 @@ int testGCD3DSlabFonN()
 	scene->setCPDScene(CPDScene);
 
 
-	std::string resourceDir = "F:\Research\Resources\APIUtilities";
+	std::string resourceDir;
+	//std::string resourceDir = "F:\Research\Resources\APIUtilities";
 	/* this part should be from a file reader*/
 	size_t nbrForces = 1;
 	std::vector<std::array<double, 3>> forces;
@@ -280,7 +280,8 @@ int testGCD3DSlabFonN()
 	scene->getCamera()->setPosition(-90, 40, 50);
 
 	simManager->setActiveScene(scene);
-	simManager->start(SimulationStatus::paused);
+	//simManager->start(SimulationStatus::paused);
+	simManager->start(SimulationStatus::running);
 
 	return 0;
 

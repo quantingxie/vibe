@@ -36,7 +36,7 @@ Color tiffanyBlue = Color(0.039, 0.729, 0.71);
 Color liverRed = Color(0.92, 0.21, 0.19);
 
 void testCPD3DBeam();
-void testCPD3DSlab();    // created by Jose James
+void testCPD3DSlab();    // created by Jose James for the slab deformation using GCD
 
 ///
 /// \brief This example demonstrates the 2D Beam simulation
