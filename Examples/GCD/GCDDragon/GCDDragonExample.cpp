@@ -52,9 +52,8 @@ main()
 	if (convertMesh)
 	{
 		//auto TetMesh = std::dynamic_pointer_cast<TetrahedralMesh>(MeshIO::read("D:/Research/IMSTK_GCDDebug/install/data/asianDragon/asianDragon.veg"/*"D:/GCD_ExampleFiles/dragon77k/dragon-coarse.tet.veg"*/));
-		auto TetMesh = std::dynamic_pointer_cast<TetrahedralMesh>(MeshIO::read(iMSTK_DATA_ROOT"/asianDragon/asianDragon.veg"/*"D:/GCD_ExampleFiles/dragon77k/dragon-coarse.tet.veg"*/));
-
-		//auto TetMesh = std::dynamic_pointer_cast<TetrahedralMesh>(MeshIO::read("F:/VIBE/Resources/vibe/3D_New/Stomach/tetramodels/1/stomach_new_SB.tet"/*"D:/GCD_ExampleFiles/dragon77k/dragon-coarse.tet.veg"*/));
+		//auto TetMesh = std::dynamic_pointer_cast<TetrahedralMesh>(MeshIO::read(iMSTK_DATA_ROOT"/asianDragon/asianDragon.veg"/*"D:/GCD_ExampleFiles/dragon77k/dragon-coarse.tet.veg"*/));
+		auto TetMesh = std::dynamic_pointer_cast<TetrahedralMesh>(MeshIO::read(iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach3/stomach.tet"/*"D:/GCD_ExampleFiles/dragon77k/dragon-coarse.tet.veg"*/));
 
 		auto& vertexPositions = TetMesh->getVertexPositions();
 		auto& tetrahedraVertices = TetMesh->getTetrahedraVertices();
@@ -101,7 +100,8 @@ main()
 
 	// Create liver cpdParticleObject from meshIO
 	//std::string path2files("D:/GCD_ExampleFiles/dragon");
-	std::string path2files(iMSTK_DATA_ROOT"/GCD_ExampleFiles/dragon");
+	//std::string path2files(iMSTK_DATA_ROOT"/GCD_ExampleFiles/dragon");
+	std::string path2files(iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach3/stomach");
 	auto& dragonCPDobject = cpd::createObjectFromMeshIO(CPDScene, path2files);
 	std::vector<unsigned> fixed;
 	auto& vmesh = dragonCPDobject->getVolumeMesh();

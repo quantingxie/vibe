@@ -1368,7 +1368,9 @@ void testCPDVolumeStomach()
 	// Create liver cpdParticleObject from meshIO
 	//auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, "F:/VIBE/Resources/GCD_ExampleFiles/liver");
 	//auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, "F:/VIBE/Resources/vibe/3D_New/Stomach/tetra/stomach1/stomach");
-	auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach1/stomach");
+	
+	//auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach1/stomach");
+	auto& liverCPDobject = cpd::createObjectFromMeshIO(CPDScene, iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach2/stomach");
 
 	// Create and initialize liver imstk::CPDObject from cpdParticleObject
 	auto liver_CSV = std::make_shared<CPDObject>("stomach");
@@ -1384,7 +1386,8 @@ void testCPDVolumeStomach()
 	TetTriMap->setSlave(liver_surfMesh);
 	//TetTriMap->compute();
 	//TetTriMap->load("F:/VIBE/Resources/vibe/3D_New/Stomach/tetra/stomach1/stomach.wet");
-	TetTriMap->load(iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach1/stomach.wet");
+	//TetTriMap->load(iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach1/stomach.wet");
+	TetTriMap->load(iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach2/stomach.wet");
 
 	// Set up material and visual model
 	auto material = std::make_shared<RenderMaterial>();

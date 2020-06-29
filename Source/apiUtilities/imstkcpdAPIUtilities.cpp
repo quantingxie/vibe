@@ -542,9 +542,10 @@ namespace cpd
 
     auto tetraMesh = TETMeshIO::read(p_resourceDir + ".tet");
     auto surfMesh = SURFMeshIO::read(p_resourceDir + ".srf");
+	//auto surfMesh = SURFMeshIO::read(p_resourceDir + ".obj");
 
-    //double scale = 1.0;
-	double scale = 0.3;
+    double scale = 1.0;
+	//double scale = 0.3;
     tetraMesh->scale(scale);
     surfMesh->scale(scale);
 
