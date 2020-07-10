@@ -366,7 +366,7 @@ void testCPDVolumeVibeMesh()
 
 void testLoadVIBECPD3DModels()
 {
-	//loadStomach3DModel();
+	loadStomach3DModel();
 	//loadESGTool();
 	//testESGToolParts();
 
@@ -387,8 +387,9 @@ void loadStomach3DModel()
 
 	//Create mesh and scale it down:
 	//auto stomachObject = MeshIO::read(iMSTK_DATA_ROOT "/stomach/Stomach_wip_01.OBJ");
-	auto stomachObject = MeshIO::read("F:/VIBE/Resources/vibe/3D/Stomach_wip_01.OBJ");
-
+	//auto stomachObject = MeshIO::read("F:/VIBE/Resources/vibe/3D/Stomach_wip_01.OBJ");
+	auto stomachObject = MeshIO::read(iMSTK_DATA_ROOT"/vibe/3D_New/Stomach/tetra/stomach3/stomach.obj");
+	
 	stomachObject->scale(0.05, Geometry::TransformType::ConcatenateToTransform);	//The stomach mesh apparently is large and needs to be substantially scaled down
 	//stomachMesh->rotate(Vec3d(0.0, 1.0, 0.0), PI / 2, Geometry::TransformType::ConcatenateToTransform);
 	//stomachObject->getNumVertices();

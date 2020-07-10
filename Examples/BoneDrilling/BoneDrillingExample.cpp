@@ -78,7 +78,8 @@ main()
 
     // Create bone scene object
     // Load the mesh
-    auto tetMesh = MeshIO::read(iMSTK_DATA_ROOT "/asianDragon/asianDragon.veg");
+    //auto tetMesh = MeshIO::read(iMSTK_DATA_ROOT "/asianDragon/asianDragon.veg");
+	auto tetMesh = MeshIO::read(iMSTK_DATA_ROOT "/vibe/3D_New/Stomach/tetra/stomach3/stomach.tet");
     if (!tetMesh)
     {
         LOG(FATAL) << "Could not read mesh from file.";

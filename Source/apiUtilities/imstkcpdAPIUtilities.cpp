@@ -544,12 +544,12 @@ namespace cpd
     auto surfMesh = SURFMeshIO::read(p_resourceDir + ".srf");
 	//auto surfMesh = SURFMeshIO::read(p_resourceDir + ".obj");
 
-    double scale = 1.0;
-	//double scale = 0.3;
+    //double scale = 1.0;
+	double scale = 0.1;
     tetraMesh->scale(scale);
     surfMesh->scale(scale);
 
-    tetraMesh->setAttachedSurfMesh(surfMesh);
+	tetraMesh->setAttachedSurfMesh(surfMesh);
 
     //for (int i = 0; i < tetraMesh->getNumVertices(); ++i)
     //{
@@ -563,6 +563,7 @@ namespace cpd
     for (int i = 0; i < n; i++)
     {
       massList[i] = nodeMass;
+	  //fixed.push_back(i);
     }
 
     ParticleObjectPtr particleObject = std::make_shared<ParticleObject>(tetraMesh);

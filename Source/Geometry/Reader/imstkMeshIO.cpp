@@ -68,7 +68,7 @@ MeshIO::read(const std::string& filePath)
     case MeshFileType::VEG:
         return VegaMeshIO::read(filePath, meshType);
         break;
-    case MeshFileType::MSH:
+	case MeshFileType::MSH:
         return MSHMeshIO::read(filePath, meshType);
         break;
     case UNKNOWN:
